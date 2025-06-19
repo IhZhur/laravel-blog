@@ -5,23 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
-    // Список постов текущего пользователя
+    use AuthorizesRequests;
+
+    /**
+     * Отобразить список постов текущего пользователя.
+     */
     public function index()
     {
         $posts = Auth::user()->posts()->latest()->paginate(10);
         return view('posts.index', compact('posts'));
     }
 
-    // Форма создания поста
+    /**
+     * Показать форму создания нового поста.
+     */
     public function create()
     {
         return view('posts.create');
     }
 
-    // Сохранение нового поста
+    /**
+     * Сохранить новый пост в базе данных.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -34,14 +43,18 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Пост успешно создан!');
     }
 
-    // Форма редактирования поста
+    /**
+     * Показать форму редактирования поста.
+     */
     public function edit(Post $post)
     {
         $this->authorize('update', $post);
         return view('posts.edit', compact('post'));
     }
 
-    // Обновление поста
+    /**
+     * Обновить пост в базе данных.
+     */
     public function update(Request $request, Post $post)
     {
         $this->authorize('update', $post);
@@ -56,7 +69,9 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Пост обновлён.');
     }
 
-    // Удаление поста
+    /**
+     * Удалить пост.
+     */
     public function destroy(Post $post)
     {
         $this->authorize('delete', $post);

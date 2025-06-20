@@ -79,4 +79,13 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('success', 'Пост удалён.');
     }
+
+    /**
+     * Отобразить публичный список всех постов (для /blog).
+     */
+    public function publicIndex()
+    {
+        $posts = Post::with('user')->latest()->paginate(10);
+        return view('posts.public', compact('posts'));
+    }
 }
